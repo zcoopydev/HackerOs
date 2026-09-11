@@ -5,7 +5,7 @@ import { LockScreen } from './components/LockScreen';
 import { Desktop } from './components/Desktop';
 import { REAL_LINUX_BOOT_LOGS, LinuxBootLog } from './data/bootLogs';
 import { terminalSound } from './utils/terminalSound';
-import { UserProfile, authStorage } from './utils/storage';
+import { UserProfile, authStorage, settingsStorage } from './utils/storage';
 
 type SystemState = 'standby' | 'logo' | 'logs' | 'lock' | 'desktop';
 
@@ -35,8 +35,15 @@ export default function App() {
     if (user) {
       setCurrentUser(user);
     }
-    const savedTheme = localStorage.getItem('nexus_os_theme');
-    if (savedTheme) setCurrentTheme(savedTheme);
+    const sysSettings = settingsStorage.getSettings();
+    if (sysSettings.theme) setCurrentTheme(sysSettings.theme);
+    if (typeof sysSettings.crtEnabled === 'boolean') setIsCrtEnabled(sysSettings.crtEnabled);
+    if (typeof sysSettings.soundMuted === 'boolean') {
+      setIsMuted(sysSettings.soundMuted);
+      if (sysSettings.soundMuted && !terminalSound.isMutedState()) {
+        terminalSound.toggleMute();
+      }
+    }
   }, []);
 
   // Auto-scroll logs
@@ -56,18 +63,20 @@ export default function App() {
 
   const handleSelectTheme = (theme: string) => {
     setCurrentTheme(theme);
-    try {
-      localStorage.setItem('nexus_os_theme', theme);
-    } catch {}
+    settingsStorage.saveSettings({ theme });
   };
 
   const handleToggleMute = () => {
-    setIsMuted(!isMuted);
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
     terminalSound.toggleMute();
+    settingsStorage.saveSettings({ soundMuted: nextMuted });
   };
 
   const handleToggleCrt = () => {
-    setIsCrtEnabled(!isCrtEnabled);
+    const nextCrt = !isCrtEnabled;
+    setIsCrtEnabled(nextCrt);
+    settingsStorage.saveSettings({ crtEnabled: nextCrt });
   };
 
   // 1. User presses BOOT button
@@ -117,6 +126,18 @@ export default function App() {
       if (index >= REAL_LINUX_BOOT_LOGS.length) {
         // Boot completed!
         terminalSound.playBootReady();
+
+        const sysSettings = settingsStorage.getSettings();
+        const savedUser = authStorage.getUser();
+
+        // If user set "skipLockScreen" in settings, directly enter desktop!
+        if (sysSettings.skipLockScreen && savedUser) {
+          timeoutIdRef.current = window.setTimeout(() => {
+            setCurrentUser(savedUser);
+            setSystemState('desktop');
+          }, 600);
+          return;
+        }
 
         // Pause briefly after final log line, then automatically transition to the LOCK SCREEN
         timeoutIdRef.current = window.setTimeout(() => {

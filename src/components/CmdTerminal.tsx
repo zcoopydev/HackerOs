@@ -143,6 +143,9 @@ export const CmdTerminal: React.FC<CmdTerminalProps> = ({
         addLine('--- NEXUS-OS COMMAND MATRIX ---', 'banner');
         addLine('neofetch / fetch : Print complete OS system specs & ASCII logo', 'output');
         addLine('zdcode           : Launch ZD Code (Hacker Typer exploit editor)', 'output');
+        addLine('cracker          : Open Brute-Force Password Cracker Matrix', 'output');
+        addLine('bomb             : Open DEFCON Warhead Detonator Console', 'output');
+        addLine('miner            : Open Quantum Crypto Mining Hash Engine', 'output');
         addLine('files            : Open visual File Manager & Hex Previewer', 'output');
         addLine('globe            : Open 3D rotating neural globe radar', 'output');
         addLine('monitor          : Open live hardware telemetry dashboard', 'output');
@@ -167,6 +170,26 @@ export const CmdTerminal: React.FC<CmdTerminalProps> = ({
       case 'neofetch':
       case 'fetch':
         setHistory((prev) => [...prev, ...getNeofetchLines()]);
+        break;
+
+      case 'cracker':
+      case 'bruteforce':
+      case 'passcracker':
+        addLine('Launching Password Cracker Matrix...', 'success');
+        onOpenApp('cracker');
+        break;
+
+      case 'bomb':
+      case 'warhead':
+      case 'detonate':
+        addLine('WARNING: Arming DEFCON Detonation System...', 'error');
+        onOpenApp('bomb');
+        break;
+
+      case 'miner':
+      case 'mining':
+        addLine('Launching Quantum Crypto Mining Engine...', 'success');
+        onOpenApp('miner');
         break;
 
       case 'zdcode':

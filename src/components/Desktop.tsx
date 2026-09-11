@@ -16,10 +16,15 @@ import {
   FolderArchive,
   KeyRound,
   Binary,
-  ShieldAlert,
-  Cpu
+  Cpu,
+  Key,
+  Bomb,
+  Coins,
+  LayoutGrid,
+  Zap,
+  Radio
 } from 'lucide-react';
-import { UserProfile } from '../utils/storage';
+import { UserProfile, settingsStorage } from '../utils/storage';
 import { terminalSound } from '../utils/terminalSound';
 import { RotatingGlobe } from './RotatingGlobe';
 import { SystemMonitor } from './SystemMonitor';
@@ -30,6 +35,9 @@ import { ZDCode } from './ZDCode';
 import { FileManager } from './FileManager';
 import { CryptoTool } from './CryptoTool';
 import { MatrixRain } from './MatrixRain';
+import { PasswordCracker } from './PasswordCracker';
+import { CyberBomb } from './CyberBomb';
+import { CryptoMiner } from './CryptoMiner';
 
 interface DesktopProps {
   currentUser: UserProfile | null;
@@ -70,129 +78,178 @@ export const Desktop: React.FC<DesktopProps> = ({
   isCrtEnabled,
   onToggleCrt
 }) => {
-  // Available Desktop Windows with default positions & dimensions
-  const [windows, setWindows] = useState<Record<string, WindowState>>({
-    terminal: {
-      id: 'terminal',
-      title: 'CMD // SHELL CONSOLE',
-      icon: Terminal,
-      isOpen: true,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 12,
-      x: 110,
-      y: 50,
-      width: 620,
-      height: 480
-    },
-    zdcode: {
-      id: 'zdcode',
-      title: 'ZD CODE // HACKER TYPER',
-      icon: Code2,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 11,
-      x: 200,
-      y: 60,
-      width: 680,
-      height: 490
-    },
-    files: {
-      id: 'files',
-      title: 'FILE MANAGER // PAYLOAD VAULT',
-      icon: FolderArchive,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 10,
-      x: 180,
-      y: 80,
-      width: 720,
-      height: 480
-    },
-    globe: {
-      id: 'globe',
-      title: 'GLOBAL NEURAL MESH RADAR',
-      icon: Globe,
-      isOpen: true,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 9,
-      x: 740,
-      y: 50,
-      width: 540,
-      height: 480
-    },
-    monitor: {
-      id: 'monitor',
-      title: 'SYSTEM HARDWARE TELEMETRY',
-      icon: Activity,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 8,
-      x: 240,
-      y: 70,
-      width: 640,
-      height: 490
-    },
-    crypto: {
-      id: 'crypto',
-      title: 'CRYPTO TOOLKIT & HASH ENCODER',
-      icon: KeyRound,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 7,
-      x: 260,
-      y: 85,
-      width: 580,
-      height: 470
-    },
-    matrix: {
-      id: 'matrix',
-      title: 'MATRIX DIGITAL RAIN',
-      icon: Binary,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 6,
-      x: 320,
-      y: 95,
-      width: 540,
-      height: 430
-    },
-    notes: {
-      id: 'notes',
-      title: 'DATA VAULT // SCRATCHPAD',
-      icon: FileCode,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 5,
-      x: 220,
-      y: 80,
-      width: 600,
-      height: 460
-    },
-    settings: {
-      id: 'settings',
-      title: 'SYSTEM SETTINGS & ACCOUNT',
-      icon: Settings,
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 4,
-      x: 280,
-      y: 90,
-      width: 560,
-      height: 460
-    }
+  const initialSettings = settingsStorage.getSettings();
+
+  // Desktop Windows definition
+  const [windows, setWindows] = useState<Record<string, WindowState>>(() => {
+    const autoOpen = initialSettings.autoOpenAllApps;
+
+    return {
+      terminal: {
+        id: 'terminal',
+        title: 'CMD // SHELL CONSOLE',
+        icon: Terminal,
+        isOpen: true,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 20,
+        x: 105,
+        y: 48,
+        width: 580,
+        height: 450
+      },
+      globe: {
+        id: 'globe',
+        title: 'GLOBAL NEURAL MESH RADAR',
+        icon: Globe,
+        isOpen: true,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 19,
+        x: 700,
+        y: 48,
+        width: 560,
+        height: 450
+      },
+      cracker: {
+        id: 'cracker',
+        title: 'PASSWORD CRACKER // BRUTE-FORCE MATRIX',
+        icon: Key,
+        isOpen: autoOpen,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 18,
+        x: 120,
+        y: 220,
+        width: 640,
+        height: 470
+      },
+      miner: {
+        id: 'miner',
+        title: 'QUANTUM CRYPTO MINER // HASH MATRIX',
+        icon: Coins,
+        isOpen: autoOpen,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 17,
+        x: 680,
+        y: 220,
+        width: 630,
+        height: 480
+      },
+      zdcode: {
+        id: 'zdcode',
+        title: 'ZD CODE // HACKER TYPER',
+        icon: Code2,
+        isOpen: autoOpen,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 16,
+        x: 220,
+        y: 90,
+        width: 640,
+        height: 480
+      },
+      bomb: {
+        id: 'bomb',
+        title: 'WARHEAD DETONATOR // DEFCON SYSTEM',
+        icon: Bomb,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 15,
+        x: 320,
+        y: 70,
+        width: 620,
+        height: 520
+      },
+      files: {
+        id: 'files',
+        title: 'FILE MANAGER // PAYLOAD VAULT',
+        icon: FolderArchive,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 14,
+        x: 180,
+        y: 80,
+        width: 680,
+        height: 470
+      },
+      monitor: {
+        id: 'monitor',
+        title: 'SYSTEM HARDWARE TELEMETRY',
+        icon: Activity,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 13,
+        x: 240,
+        y: 70,
+        width: 640,
+        height: 480
+      },
+      crypto: {
+        id: 'crypto',
+        title: 'CRYPTO TOOLKIT & HASH ENCODER',
+        icon: KeyRound,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 12,
+        x: 260,
+        y: 85,
+        width: 580,
+        height: 460
+      },
+      matrix: {
+        id: 'matrix',
+        title: 'MATRIX DIGITAL RAIN',
+        icon: Binary,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 11,
+        x: 320,
+        y: 95,
+        width: 540,
+        height: 430
+      },
+      notes: {
+        id: 'notes',
+        title: 'DATA VAULT // SCRATCHPAD',
+        icon: FileCode,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 10,
+        x: 220,
+        y: 80,
+        width: 600,
+        height: 460
+      },
+      settings: {
+        id: 'settings',
+        title: 'SYSTEM SETTINGS & PREFERENCES',
+        icon: Settings,
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        zIndex: 9,
+        x: 280,
+        y: 65,
+        width: 600,
+        height: 520
+      }
+    };
   });
 
-  const [topZ, setTopZ] = useState<number>(30);
+  const [topZ, setTopZ] = useState<number>(40);
   const [timeString, setTimeString] = useState<string>('');
+
+  // Futuristic Hyperspace Warp Entrance Animation State
+  const [showWarpAnimation, setShowWarpAnimation] = useState<boolean>(initialSettings.warpAnimation);
+  const [warpProgress, setWarpProgress] = useState<number>(0);
 
   // Dragging state tracking
   const [dragInfo, setDragInfo] = useState<{
@@ -205,6 +262,28 @@ export const Desktop: React.FC<DesktopProps> = ({
 
   const dragInfoRef = useRef(dragInfo);
   dragInfoRef.current = dragInfo;
+
+  // Trigger Warp Entrance Animation
+  useEffect(() => {
+    if (!showWarpAnimation) return;
+
+    terminalSound.playWarp();
+    const startTime = Date.now();
+    const duration = 1400; // 1.4s
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const prog = Math.min(1, elapsed / duration);
+      setWarpProgress(prog);
+
+      if (prog >= 1) {
+        clearInterval(interval);
+        setShowWarpAnimation(false);
+      }
+    }, 25);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Real-time clock updater
   useEffect(() => {
@@ -237,7 +316,6 @@ export const Desktop: React.FC<DesktopProps> = ({
         const win = prev[id];
         if (!win || win.isMaximized) return prev;
 
-        // Boundaries: keep window partially visible on screen
         const maxX = Math.max(200, window.innerWidth - 120);
         const maxY = Math.max(200, window.innerHeight - 80);
 
@@ -331,7 +409,7 @@ export const Desktop: React.FC<DesktopProps> = ({
 
   // Start dragging a window from title bar
   const startDrag = (id: string, e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only main left click
+    if (e.button !== 0) return;
     focusWindow(id);
 
     const win = windows[id];
@@ -346,12 +424,50 @@ export const Desktop: React.FC<DesktopProps> = ({
     });
   };
 
-  // List of all launchers on the desktop
+  // Tile / Arrange All Windows across screen
+  const handleArrangeWindows = () => {
+    terminalSound.playTik();
+    const openIds = Object.keys(windows).filter((id) => windows[id].isOpen);
+    if (openIds.length === 0) return;
+
+    const screenW = window.innerWidth - 120;
+    const screenH = window.innerHeight - 80;
+
+    let cols = 2;
+    if (openIds.length >= 5) cols = 3;
+
+    const rows = Math.ceil(openIds.length / cols);
+    const cellW = Math.max(380, Math.floor(screenW / cols) - 10);
+    const cellH = Math.max(300, Math.floor(screenH / rows) - 10);
+
+    setWindows((prev) => {
+      const next = { ...prev };
+      openIds.forEach((id, idx) => {
+        const col = idx % cols;
+        const row = Math.floor(idx / cols);
+        next[id] = {
+          ...next[id],
+          isMaximized: false,
+          isMinimized: false,
+          x: 105 + col * (cellW + 10),
+          y: 44 + row * (cellH + 10),
+          width: cellW,
+          height: cellH
+        };
+      });
+      return next;
+    });
+  };
+
+  // Launchers on the desktop dock / launcher strip
   const desktopApps = [
     { id: 'terminal', label: 'CMD // SHELL', icon: Terminal },
+    { id: 'cracker', label: 'PW CRACKER', icon: Key },
+    { id: 'bomb', label: 'WARHEAD DET', icon: Bomb },
+    { id: 'miner', label: 'CRYPTO MINER', icon: Coins },
     { id: 'zdcode', label: 'ZD CODE', icon: Code2 },
-    { id: 'files', label: 'FILE VAULT', icon: FolderArchive },
     { id: 'globe', label: 'NEURAL RADAR', icon: Globe },
+    { id: 'files', label: 'FILE VAULT', icon: FolderArchive },
     { id: 'monitor', label: 'TELEMETRY', icon: Activity },
     { id: 'crypto', label: 'CRYPTO TOOL', icon: KeyRound },
     { id: 'matrix', label: 'MATRIX RAIN', icon: Binary },
@@ -361,6 +477,61 @@ export const Desktop: React.FC<DesktopProps> = ({
 
   return (
     <div className="w-full h-screen overflow-hidden flex flex-col justify-between bg-black text-emerald-400 select-none relative font-mono">
+      {/* ─────────────────────────────────────────────────────────────
+          FUTURISTIC HYPERSPACE WARP DESKTOP ENTRANCE OVERLAY
+         ───────────────────────────────────────────────────────────── */}
+      {showWarpAnimation && (
+        <div
+          onClick={() => setShowWarpAnimation(false)}
+          className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center pointer-events-auto cursor-pointer transition-opacity duration-300"
+          style={{ opacity: 1 - Math.max(0, (warpProgress - 0.7) / 0.3) }}
+        >
+          {/* Hyperspace tunnel rings */}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+            <div
+              className="w-96 h-96 rounded-full border border-emerald-400/40 transition-transform duration-75"
+              style={{ transform: `scale(${1 + warpProgress * 4})`, opacity: 1 - warpProgress }}
+            />
+            <div
+              className="w-64 h-64 rounded-full border border-dashed border-emerald-300/60 transition-transform duration-75"
+              style={{ transform: `scale(${1 + warpProgress * 6}) rotate(${warpProgress * 180}deg)` }}
+            />
+            <div
+              className="w-32 h-32 rounded-full border-2 border-emerald-400 shadow-[0_0_50px_#00ff66] transition-transform duration-75"
+              style={{ transform: `scale(${1 + warpProgress * 8})` }}
+            />
+          </div>
+
+          {/* Central Hologram Banner */}
+          <div className="relative z-10 text-center space-y-3 p-6 max-w-lg">
+            <div className="inline-flex items-center justify-center p-3 rounded-full bg-emerald-950/80 border border-emerald-400 shadow-[0_0_30px_#00ff66] animate-pulse">
+              <Zap className="w-8 h-8 text-emerald-300" />
+            </div>
+
+            <h1 className="text-xl sm:text-2xl font-black text-emerald-300 glow-text-green tracking-[0.25em] uppercase">
+              INITIALIZING NEXUS // WORKSTATION
+            </h1>
+
+            <div className="space-y-1 text-xs text-emerald-400 font-mono tracking-wider">
+              <div>[+] BYPASSING SUB-ORBITAL FIREWALLS: DONE</div>
+              <div>[+] QUANTUM THREAD ENCLAVE: SYNCHRONIZED</div>
+              <div className="text-emerald-300 font-bold">
+                [+] DE-CLOAKING DESKTOP ENVIRONMENT...
+              </div>
+            </div>
+
+            <div className="w-64 h-1.5 bg-black/80 rounded-full mx-auto overflow-hidden border border-emerald-500/40">
+              <div
+                className="h-full bg-emerald-400 shadow-[0_0_12px_#00ff66] transition-all duration-75"
+                style={{ width: `${warpProgress * 100}%` }}
+              />
+            </div>
+
+            <div className="text-[9px] text-emerald-600">CLICK ANYWHERE OR PRESS ESC TO SKIP</div>
+          </div>
+        </div>
+      )}
+
       {/* Top Cyber Status / Telemetry Bar */}
       <header className="w-full bg-black/90 border-b border-emerald-500/30 px-4 py-1.5 flex items-center justify-between text-xs z-40 backdrop-blur-md">
         <div className="flex items-center gap-3">
@@ -380,13 +551,22 @@ export const Desktop: React.FC<DesktopProps> = ({
           </div>
         </div>
 
-        {/* Center System Specs / State */}
-        <div className="hidden lg:flex items-center gap-4 text-[10px] text-emerald-500">
-          <span className="flex items-center gap-1">
+        {/* Center System Specs & Tile Windows Action */}
+        <div className="flex items-center gap-3 text-[10px] text-emerald-500">
+          <button
+            onClick={handleArrangeWindows}
+            className="px-2 py-1 rounded bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 flex items-center gap-1.5 cursor-pointer transition-colors"
+            title="Tile and Arrange All Open Windows"
+          >
+            <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
+            <span>ARRANGE ALL</span>
+          </button>
+
+          <span className="hidden lg:flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#00ff66]" />
             SECURE LINK: ESTABLISHED (AES-512)
           </span>
-          <span>THEME: {currentTheme.toUpperCase()}</span>
+          <span className="hidden lg:inline">THEME: {currentTheme.toUpperCase()}</span>
         </div>
 
         {/* Right Tools & Clock */}
@@ -427,7 +607,7 @@ export const Desktop: React.FC<DesktopProps> = ({
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00ff6608_1px,transparent_1px),linear-gradient(to_bottom,#00ff6608_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
         {/* Desktop Application Launchers Column */}
-        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2.5 max-h-[calc(100vh-120px)] overflow-y-auto terminal-scroll pr-2">
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2 max-h-[calc(100vh-110px)] overflow-y-auto terminal-scroll pr-1">
           {desktopApps.map((app) => {
             const IconComp = app.icon;
             const isOpen = windows[app.id]?.isOpen;
@@ -436,10 +616,10 @@ export const Desktop: React.FC<DesktopProps> = ({
               <button
                 key={app.id}
                 onClick={() => openApp(app.id)}
-                className="group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-150 hover:bg-emerald-950/60 border border-transparent hover:border-emerald-500/40 cursor-pointer w-20 text-center"
+                className="group flex flex-col items-center justify-center p-1.5 rounded-xl transition-all duration-150 hover:bg-emerald-950/60 border border-transparent hover:border-emerald-500/40 cursor-pointer w-20 text-center"
               >
-                <div className="w-11 h-11 rounded-lg bg-black/80 border border-emerald-500/30 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_15px_rgba(0,255,102,0.35)] group-hover:border-emerald-400 transition-all relative">
-                  <IconComp className="w-5 h-5 text-emerald-400 group-hover:text-emerald-300" />
+                <div className="w-10 h-10 rounded-lg bg-black/80 border border-emerald-500/30 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_15px_rgba(0,255,102,0.35)] group-hover:border-emerald-400 transition-all relative">
+                  <IconComp className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300" />
                   {isOpen && (
                     <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-black shadow-[0_0_6px_#00ff66]" />
                   )}
@@ -533,11 +713,17 @@ export const Desktop: React.FC<DesktopProps> = ({
                     />
                   )}
 
+                  {win.id === 'cracker' && <PasswordCracker />}
+
+                  {win.id === 'bomb' && <CyberBomb />}
+
+                  {win.id === 'miner' && <CryptoMiner />}
+
                   {win.id === 'zdcode' && <ZDCode />}
 
-                  {win.id === 'files' && <FileManager />}
-
                   {win.id === 'globe' && <RotatingGlobe />}
+
+                  {win.id === 'files' && <FileManager />}
 
                   {win.id === 'monitor' && <SystemMonitor />}
 
@@ -607,7 +793,7 @@ export const Desktop: React.FC<DesktopProps> = ({
             <span className="hidden sm:inline">SETTINGS</span>
           </button>
           <span className="hidden md:inline">&bull;</span>
-          <span className="hidden md:inline">SYSTEM: ONLINE</span>
+          <span className="hidden md:inline">QUANTUM MATRIX: ACTIVE</span>
         </div>
       </footer>
     </div>
