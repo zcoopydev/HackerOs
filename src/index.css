@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #030706;
+    color: #00ff66;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    overflow-x: hidden;
+  }
+}
+
+/* CRT Screen Scanline Overlay */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.4) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.04),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.04)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Phosphor Glow Themes */
+.glow-text-green {
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.7), 0 0 16px rgba(0, 255, 102, 0.4);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.7), 0 0 16px rgba(0, 229, 255, 0.4);
+}
+
+.glow-text-amber {
+  text-shadow: 0 0 8px rgba(255, 179, 0, 0.7), 0 0 16px rgba(255, 179, 0, 0.4);
+}
+
+.glow-text-crimson {
+  text-shadow: 0 0 8px rgba(255, 42, 95, 0.7), 0 0 16px rgba(255, 42, 95, 0.4);
+}
+
+.theme-cyan {
+  filter: hue-rotate(60deg);
+}
+
+.theme-amber {
+  filter: hue-rotate(185deg);
+}
+
+.theme-crimson {
+  filter: hue-rotate(240deg);
+}
+
+.glow-border-green {
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3), inset 0 0 15px rgba(0, 255, 102, 0.15);
+}
+
+.glow-box-red {
+  box-shadow: 0 0 20px rgba(255, 30, 30, 0.4), inset 0 0 10px rgba(255, 30, 30, 0.2);
+}
+
+/* Custom Scrollbar for terminal logs */
+.terminal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.terminal-scroll::-webkit-scrollbar-track {
+  background: #020904;
+}
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: #05401e;
+  border-radius: 3px;
+}
+.terminal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #00ff66;
+}
+
+/* Subtle CRT flicker */
+@keyframes crt-flicker {
+  0% { opacity: 0.99; }
+  50% { opacity: 1; }
+  52% { opacity: 0.97; }
+  54% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+.animate-flicker {
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* CSS Hexagon Logo clip-path */
+.clip-hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.clip-shield {
+  clip-path: polygon(50% 0%, 100% 15%, 85% 85%, 50% 100%, 15% 85%, 0% 15%);
+}
+

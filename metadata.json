@@ -1,0 +1,7 @@
+{
+  "name": "Hacker Simulator",
+  "description": "A futuristic cyber hacker workstation featuring draggable multi-window desktop, ZD Code hacker typer, visual file manager with hex dump preview, Neofetch terminal with reconnaissance and attack commands, 3D rotating neural globe, hardware telemetry, crypto encoder, and matrix rain.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
